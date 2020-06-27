@@ -25,6 +25,7 @@ ARG LUA_VERSION="5.3"
 
 COPY --from=iconv /usr/local/include /usr/local/include/
 COPY --from=iconv /usr/local/lib /usr/local/lib/
+COPY vimrc /usr/local/share/vim/vimrc
 
 RUN apk add --no-cache --virtual .build \
         git \
@@ -62,6 +63,8 @@ RUN apk add --no-cache --virtual .build \
  && make \
  && make install \
  && cd /root \
+ && git clone https://github.com/VundleVim/Vundle.vim.git /root/.vim/bundle/Vundle.vim \
+ && vim +PluginInstall +qall \
  && rm -fr /usr/src/vim \
  && apk del --purge .build \
         ${VIM_ENABLE_RUBY:+ruby} \
@@ -75,7 +78,6 @@ RUN apk add --no-cache --virtual .build \
         ${VIM_ENABLE_TCL:+-c 'verbose tcl puts "Tcl v[info patchlevel]"'} \
         -c q
 
-COPY vimrc /usr/local/share/vim/vimrc
 
 WORKDIR /root
 
